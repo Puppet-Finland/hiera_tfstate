@@ -56,7 +56,7 @@ Puppet::Functions.create_function(:hiera_tfstate) do
   end
 
   def validate_terraform_version(raw_state)
-    return unless raw_state['terraform_version'] =~ /0\.13\.\d+/
+    return if raw_state['terraform_version'] =~ /0\.13\.\d+/
 
     raise 'ERROR: this Hiera backend supports only Terraform 0.13.x state files.'
   end
