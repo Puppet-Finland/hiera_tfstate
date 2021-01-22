@@ -106,7 +106,7 @@ Puppet::Functions.create_function(:hiera_tfstate) do
       resource_path.append(resource['name'])
 
       resource['instances'].each do |instance|
-        resource_path.append(instance['index_key'])
+        resource_path.append(instance['index_key']) if instance['index_key']
 
         instance['attributes'].each do |attribute|
           resource_path.push(attribute[0])
