@@ -1,10 +1,10 @@
 {
   "name": "puppetfinland-hiera_tfstate",
   "version": "0.1.0",
-  "author": "Samuli Seppänen",
-  "summary": "",
+  "author": "Puppet-Finland team",
+  "summary": "Terraform state file Hiera backend",
   "license": "BSD-2-Clause",
-  "source": "",
+  "source": "https://github.com/Puppet-Finland/hiera_tfstate",
   "dependencies": [
 
   ],
