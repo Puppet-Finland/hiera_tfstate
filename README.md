@@ -17,8 +17,12 @@ This Hiera backend takes the Terraform state file and produces a flattened list
 of data and resource attribute paths and their values. All values are prefixed
 with "tfstate". Some examples:
 
-    tfstate::aws_acm_certificate::my-alb::arn: <arn>
-    tfstate::module::my_instance::aws_instance::ec2_instance::0::private_ip: 10.9.2.50
+    tfstate::aws_acm_certificate::my-alb::arn: some-arn
+    tfstate::aws_acm_certificate::my-alb::arn_suffix: some-arn-suffix
+    tfstate::aws_acm_certificate::my-alb::arn_suffix: some-dns-name
+    tfstate::module::my_instance::aws_instance::ec2_instance::0::ami: some_ami_id
+    tfstate::module::my_instance::aws_instance::ec2_instance::0::arn: some-arn
+    tfstate::module::my_instance::aws_instance::ec2_instance::0::associate_public_ip_address: false
 
 If and only if all resources/data sources are stored inside a module you can
 use *no_root_module: true* in the options hash to remove the root module away
