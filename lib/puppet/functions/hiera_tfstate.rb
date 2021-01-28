@@ -9,8 +9,9 @@ Puppet::Functions.create_function(:hiera_tfstate) do
 
   def data_hash(options, context)
     context.explain { "Backend options: #{options}" }
-    raw_state = load_tfstate(options)
-    raw_state = JSON.parse(raw_state)
+    validate_options(options)
+    validate_backend_options(options)
+    raw_state = JSON.parse(load_tfstate(options))
 
     # Ensure that the state file belongs to a known good Terraform version
     validate_terraform_version(raw_state)
@@ -29,14 +30,45 @@ Puppet::Functions.create_function(:hiera_tfstate) do
     state
   end
 
-  def load_tfstate(options)
-    if options['backend'] == 'file'
-      load_file(options)
-    elsif options['backend'] == 's3'
-      download_from_s3(options)
-    else
-      raise Puppet::DataBinding::LookupError, "[hiera_tfstate] Unsupported backend: #{options['backend']}"
+  def validate_options(options)
+    valid_options = ['backend', 'debug', 'no_root_module', 'profile', 'bucket', 'key', 'statefile']
+
+    options.each do |key, _value|
+      unless valid_options.include?(key)
+        raise(Puppet::DataBinding::LookupError, "[hiera_tfstate] invalid option #{key}")
+      end
     end
+  end
+
+  def validate_backend_options(options)
+    case options['backend']
+    when 'file'
+      validate_file_options(options)
+    when 's3'
+      validate_s3_options(options)
+    else
+      raise Puppet::DataBinding::LookupError, "[hiera_tfstate] Test Unsupported backend: #{options['backend']}"
+    end
+  end
+
+  def validate_file_options(options)
+    return unless options['statefile']
+    raise Puppet::DataBinding::LookupError, '[hiera_tfstate] statefile option missing!'
+  end
+
+  def validate_s3_options(options)
+    required_options = ['profile', 'bucket', 'key']
+
+    required_options.each do |key|
+      unless options.include?(key)
+        raise(Puppet::DataBinding::LookupError, "[hiera_tfstate] required option #{key} missing!")
+      end
+    end
+  end
+
+  def load_tfstate(options)
+    load_file(options) if options['backend'] == 'file'
+    download_from_s3(options) if options['backend'] == 's3'
   end
 
   def load_file(options)
