@@ -57,9 +57,14 @@ Example for hiera.yaml:
 ## s3
 
 This backend loads the state file from Amazon S3 bucket. You will need to
-install the AWS S3 SDK for Ruby to use it:
+install the AWS S3 SDK for Ruby to use it for puppet lookup command:
 
     $ /opt/puppetlabs/puppet/bin/gem install aws-sdk-s3
+
+Or to use it on a Puppetserver:
+
+    $ puppetserver gem install aws-sdk-s3
+    $ systemctl restart puppetserver
 
 Example for hiera.yaml:
 
