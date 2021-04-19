@@ -31,7 +31,7 @@ Puppet::Functions.create_function(:hiera_tfstate) do
   end
 
   def validate_options(options)
-    valid_options = ['backend', 'debug', 'no_root_module', 'region', 'bucket', 'key', 'credentials_file', 'statefile']
+    valid_options = ['backend', 'debug', 'no_root_module', 's3_options_file', 'statefile']
 
     options.each do |key, _value|
       unless valid_options.include?(key)
@@ -57,7 +57,7 @@ Puppet::Functions.create_function(:hiera_tfstate) do
   end
 
   def validate_s3_options(options)
-    required_options = ['region', 'bucket', 'key', 'credentials_file']
+    required_options = ['s3_options_file']
 
     required_options.each do |key|
       unless options.include?(key)
@@ -82,13 +82,13 @@ Puppet::Functions.create_function(:hiera_tfstate) do
 
   def download_from_s3(options)
     require 'aws-sdk-s3'
-    creds = YAML.safe_load(File.read(options['credentials_file']))
+    s3_options = YAML.safe_load(File.read(options['s3_options_file']))
 
-    s3_client = Aws::S3::Client.new(region: options['region'],
-                                    access_key_id: creds['access_key_id'],
-                                    secret_access_key: creds['secret_access_key'])
+    s3_client = Aws::S3::Client.new(region: s3_options['region'],
+                                    access_key_id: s3_options['access_key_id'],
+                                    secret_access_key: s3_options['secret_access_key'])
 
-    resp = s3_client.get_object(bucket: options['bucket'], key: options['key'])
+    resp = s3_client.get_object(bucket: s3_options['bucket'], key: s3_options['key'])
     resp.body.read
   end
 
