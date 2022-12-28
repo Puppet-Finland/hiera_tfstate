@@ -22,7 +22,15 @@ with "tfstate". Some examples:
     tfstate::aws_acm_certificate::my-alb::arn_suffix: some-dns-name
     tfstate::module::my_instance::aws_instance::ec2_instance::0::ami: some_ami_id
     tfstate::module::my_instance::aws_instance::ec2_instance::0::arn: some-arn
-    tfstate::module::my_instance::aws_instance::ec2_instance::0::associate_public_ip_address: false
+    tfstate::module::my_instance::my-awesome-instance::fqdn::aws_instance::ec2_instance::0::associate_public_ip_address: false
+
+**NOTE**
+Some Terraform modules might come with the format Hiera does not support.
+The special characters are removed during conversion.
+Example:
+    `module.instance["some-host.domain.com"].aws_instance.ec2_instance[0].private_ip`
+in Hiera:
+    `tfstate::module::instance::some-host::domain::com::aws_instance::ec2_instance::0::private_ip`
 
 If and only if all resources/data sources are stored inside a module you can
 use *no_root_module: true* in the options hash to remove the root module away
@@ -72,7 +80,8 @@ Example for hiera.yaml:
       data_hash: hiera_tfstate
       options:
         backend: 's3'
-        profile: 'hiera'
+        region: 'us-central-1'
+        profile: 'hiera' # optional
         bucket: 'terraform-state.example.org'
         key: 'foobar'
 
